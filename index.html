@@ -1,9 +1,185 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>SusuHub V1</title>
+<link rel="stylesheet" href="css/style.css">
+
+<style>
+/* quick MVP styling fallback so it still looks clean even without CSS file */
+body{font-family:Arial;background:#f4f7fb;margin:0;padding:0;}
+.screen{display:none;padding:16px;}
+.active{display:block;}
+.card{background:#fff;padding:16px;border-radius:16px;margin:10px 0;box-shadow:0 2px 8px rgba(0,0,0,0.08);}
+.btn{background:#0b6efd;color:#fff;border:none;padding:12px;border-radius:10px;width:100%;margin-top:10px;}
+input,select{width:100%;padding:12px;margin:8px 0;border-radius:10px;border:1px solid #ccc;}
+h2{color:#0b6efd}
+.small{font-size:13px;color:#666}
+</style>
 </head>
+
 <body>
-<h1>SusuHub Loading...</h1>
+
+<!-- LOGIN SCREEN -->
+<div id="login" class="screen active">
+<h2>SusuHub Login</h2>
+<div class="card">
+<input id="phone" placeholder="Phone Number (0XXXXXXXXX)" />
+<button class="btn" onclick="goOTP()">Send OTP</button>
+<p class="small" id="phoneError"></p>
+</div>
+</div>
+
+<!-- OTP SCREEN -->
+<div id="otp" class="screen">
+<h2>Verify OTP</h2>
+<div class="card">
+<input id="otpCode" inputmode="numeric" placeholder="Enter 6-digit OTP"/>
+<button class="btn" onclick="verifyOTP()">Verify</button>
+<p class="small" id="otpError"></p>
+</div>
+</div>
+
+<!-- PROFILE SETUP -->
+<div id="profile" class="screen">
+<h2>Create Profile</h2>
+<div class="card">
+<input id="name" placeholder="Full Name"/>
+<input id="momo" placeholder="Mobile Money Number"/>
+<input type="file" id="photo"/>
+<button class="btn" onclick="goDashboard()">Save Profile</button>
+</div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="screen">
+<h2>Dashboard</h2>
+
+<div class="card">
+<h3>Total Savings</h3>
+<h1>GHS 0.00</h1>
+</div>
+
+<div class="card">
+<button class="btn" onclick="show('savings')">Create Savings Plan</button>
+<button class="btn" onclick="show('withdraw')">Withdraw</button>
+<button class="btn" onclick="show('complaints')">Complaints</button>
+<button class="btn" onclick="show('settings')">Settings</button>
+</div>
+</div>
+
+<!-- SAVINGS -->
+<div id="savings" class="screen">
+<h2>Create Plan</h2>
+
+<div class="card">
+<input id="amount" type="number" placeholder="Amount (GHS 2 - 100)"/>
+<select id="frequency">
+<option>Daily</option>
+<option>Weekly</option>
+<option>Monthly</option>
+</select>
+
+<select id="maturity">
+<option>30 Days</option>
+<option>60 Days</option>
+<option>90 Days</option>
+<option>Custom Date</option>
+</select>
+
+<button class="btn" onclick="createPlan()">Create Plan</button>
+<p class="small" id="savingsError"></p>
+</div>
+</div>
+
+<!-- WITHDRAW -->
+<div id="withdraw" class="screen">
+<h2>Withdrawals</h2>
+<div class="card">
+<p>Withdrawal only after maturity</p>
+<button class="btn">Request Withdrawal</button>
+</div>
+</div>
+
+<!-- COMPLAINTS -->
+<div id="complaints" class="screen">
+<h2>Complaints</h2>
+<div class="card">
+<input placeholder="Title"/>
+<textarea placeholder="Description"></textarea>
+<button class="btn">Submit Ticket</button>
+</div>
+</div>
+
+<!-- SETTINGS -->
+<div id="settings" class="screen">
+<h2>Settings</h2>
+
+<div class="card">
+<button class="btn">Light Mode</button>
+<button class="btn">Dark Mode</button>
+<button class="btn">Change Password</button>
+</div>
+</div>
+
+<script>
+function show(id){
+document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+document.getElementById(id).classList.add('active');
+}
+
+/* PHONE VALIDATION */
+function goOTP(){
+let phone = document.getElementById("phone").value;
+
+if(!phone.startsWith("0") || phone.length !== 10){
+document.getElementById("phoneError").innerText =
+"Number must start with 0 and be 10 digits";
+return;
+}
+
+show('otp');
+}
+
+/* OTP VALIDATION */
+function verifyOTP(){
+let otp = document.getElementById("otpCode").value;
+
+if(otp.length !== 6){
+document.getElementById("otpError").innerText =
+"Enter valid 6-digit OTP";
+return;
+}
+
+show('profile');
+}
+
+/* DASHBOARD */
+function goDashboard(){
+show('dashboard');
+}
+
+/* SAVINGS VALIDATION */
+function createPlan(){
+let amount = Number(document.getElementById("amount").value);
+
+if(amount <= 0){
+document.getElementById("savingsError").innerText =
+"Amount must be greater than zero";
+return;
+}
+
+if(amount < 2 || amount > 100){
+document.getElementById("savingsError").innerText =
+"Amount must be between GHS 2 and GHS 100";
+return;
+}
+
+alert("Plan Created Successfully");
+show('dashboard');
+}
+</script>
+
 </body>
 </html>
